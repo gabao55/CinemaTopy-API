@@ -16,6 +16,8 @@ async function validToken(req, res, next){
             return res.sendStatus(401);
         }
 
+        delete user.password;
+
         res.locals.session = session;
         res.locals.user = user;
         next();
