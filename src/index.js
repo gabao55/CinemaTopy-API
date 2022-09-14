@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRouter from '../src/routes/auth.router.js';
+import cartRouter from '../src/routes/cart.router.js';
 import mongo from './db/db.js';
 dotenv.config();
 
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(authRouter);
+app.use(cartRouter);
 
 let db = await mongo();
 

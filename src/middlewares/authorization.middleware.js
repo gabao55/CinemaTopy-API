@@ -11,10 +11,16 @@ async function validToken(req, res, next){
         return res.status(401).send();
         }
 
+        const user = await db.collection('users').findOne({ _id: session.userId });
+        if (!user) {
+            return res.sendStatus(401);
+        }
+
         res.locals.session = session;
+        res.locals.user = user;
         next();
     } catch (error) {
-    return res.status(500).send(error.message);
+        return res.status(500).send(error.message);
     }
 }
 
