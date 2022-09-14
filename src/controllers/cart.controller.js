@@ -10,13 +10,13 @@ const addProductSchema = joi.object({
 });
 
 async function addProductToCart(req, res) {
-    const validation = addProductSchema.validate(req.body, { abortEarly: false });
+    const user = res.locals.user;
+    const validation = addProductSchema.validate({...req.body, userId: user._id.toString()}, { abortEarly: false });
     if (validation.error) {
         const erros = validation.error.details.map((detail) => detail.message);
         return res.status(422).send(erros);
     }
 
-    const user = res.locals.user;
     const product = res.locals.product;
     const { amount } = req.body;
 
@@ -53,12 +53,16 @@ async function listCartProducts(req, res) {
             res.status(404).send('Erro ao processar produtos, tente novamente.');
         }
 
-        const cartProductsInfo = cartProducts.map(async (product) => {
-            return {
-                productDetails: await db.collection('products').findOne({ _id: product.productId }),
-                amount: product.amount,
-            }
-        })
+        const cartProductsInfo = [];
+
+        for (let i = 0; i < cartProducts.length; i ++) {
+            const productDetails = await db.collection('products').findOne({ _id: cartProducts[i].productId });
+            
+            cartProductsInfo.push({
+                productDetails,
+                amount: cartProducts[i].amount,
+            });
+        }
 
         res.send(cartProductsInfo);
 
@@ -81,7 +85,7 @@ async function deleteCartProduct(req, res) {
             return res.status(404).send('Produto não foi adicionado ao carrinho');
         }
 
-        await db.collection('cartProduct').deleteOne({ _id: cartProduct._id });
+        await db.collection('cartProducts').deleteOne({ _id: cartProduct._id });
 
         res.sendStatus(200);
 

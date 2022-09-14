@@ -5,10 +5,12 @@ import productsMiddleware from '../middlewares/cart.middleware.js';
 
 const router = express.Router();
 
-router.use(productsMiddleware);
 router.use(authorizationMiddleware);
 
 router.get('/cart/products', listCartProducts);
+
+router.use(productsMiddleware);
+
 router.post('/cart/product', addProductToCart);
 router.delete('/cart/product', deleteCartProduct);
 
