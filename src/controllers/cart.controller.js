@@ -33,7 +33,7 @@ async function addProductToCart(req, res) {
         await db.collection('cartProducts').insertOne({
             userId: user._id,
             productId: product._id,
-            amount,
+            amount
         });
 
         res.sendStatus(200);
@@ -94,4 +94,50 @@ async function deleteCartProduct(req, res) {
     }
 }
 
-export { addProductToCart, listCartProducts, deleteCartProduct };
+async function updateProductAmount(req, res) {
+    const user = res.locals.user;
+    const product = res.locals.product;
+
+    const validation = addProductSchema.validate({...req.body, userId: user._id.toString()}, { abortEarly: false });
+    if (validation.error) {
+        const erros = validation.error.details.map((detail) => detail.message);
+        return res.status(422).send(erros);
+    }
+    
+    try {
+        
+        const cartProduct = await db.collection('cartProducts').findOne({
+            userId: user._id,
+            productId: product._id
+        });
+        if (!cartProduct) {
+            return res.status(404).send('Produto não encontrado no carrinho');
+        }
+
+        await db.collection('cartProducts').updateOne({ _id: cartProduct._id}, { $set: {
+            userId: user._id,
+            productId: product._id,
+            amount: req.body.amount
+        } });
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        return res.status(500).send(error.message);        
+    }
+}
+
+async function cleanCart(req, res) {
+    const user = res.locals.user;
+    
+    try {
+        await db.collection('cartProducts').deleteMany({ userId: user._id });
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        return res.status(500).send(error.message);        
+    }
+}
+
+export { addProductToCart, listCartProducts, deleteCartProduct, cleanCart, updateProductAmount };
