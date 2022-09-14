@@ -1,5 +1,5 @@
 import express from 'express';
-import { addProductToCart, cleanCart, deleteCartProduct, listCartProducts } from '../controllers/cart.controller.js';
+import { addProductToCart, cleanCart, deleteCartProduct, listCartProducts, updateProductAmount } from '../controllers/cart.controller.js';
 import authorizationMiddleware from '../middlewares/authorization.middleware.js';
 import productsMiddleware from '../middlewares/cart.middleware.js';
 
@@ -12,6 +12,7 @@ router.delete('/cart/products', cleanCart);
 
 router.use(productsMiddleware);
 
+router.put('/cart/product', updateProductAmount);
 router.post('/cart/product', addProductToCart);
 router.delete('/cart/product', deleteCartProduct);
 
