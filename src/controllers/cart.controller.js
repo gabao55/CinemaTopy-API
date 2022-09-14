@@ -94,4 +94,17 @@ async function deleteCartProduct(req, res) {
     }
 }
 
-export { addProductToCart, listCartProducts, deleteCartProduct };
+async function cleanCart(req, res) {
+    const user = res.locals.user;
+    
+    try {
+        await db.collection('cartProducts').deleteMany({ userId: user._id });
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        return res.status(500).send(error.message);        
+    }
+}
+
+export { addProductToCart, listCartProducts, deleteCartProduct, cleanCart };
