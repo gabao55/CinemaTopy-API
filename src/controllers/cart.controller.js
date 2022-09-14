@@ -21,6 +21,14 @@ async function addProductToCart(req, res) {
     const { amount } = req.body;
 
     try {
+
+        const isProductAdded = await db.collection('cartProducts').findOne({
+            userId: user._id,
+            productId: product._id
+        });
+        if (isProductAdded) {
+            return res.status(422).send('Produto já foi adicionado ao carrinho');
+        }
         
         await db.collection('cartProducts').insertOne({
             userId: user._id,
@@ -35,4 +43,51 @@ async function addProductToCart(req, res) {
     }
 }
 
-export { addProductToCart };
+async function listCartProducts(req, res) {
+    const user = res.locals.user;
+
+    try {
+        
+        const cartProducts = await db.collection('cartProducts').find({ userId: user._id }).toArray();
+        if (!cartProducts) {
+            res.status(404).send('Erro ao processar produtos, tente novamente.');
+        }
+
+        const cartProductsInfo = cartProducts.map(async (product) => {
+            return {
+                productDetails: await db.collection('products').findOne({ _id: product.productId }),
+                amount: product.amount,
+            }
+        })
+
+        res.send(cartProductsInfo);
+
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+async function deleteCartProduct(req, res) {
+    const user = res.locals.user;
+    const product = res.locals.product;
+    
+    try {
+        
+        const cartProduct = await db.collection('cartProducts').findOne({
+            userId: user._id,
+            productId: product._id
+        });
+        if (!cartProduct) {
+            return res.status(404).send('Produto não foi adicionado ao carrinho');
+        }
+
+        await db.collection('cartProduct').deleteOne({ _id: cartProduct._id });
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        return res.status(500).send(error.message);        
+    }
+}
+
+export { addProductToCart, listCartProducts, deleteCartProduct };

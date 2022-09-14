@@ -7,6 +7,7 @@ async function validProduct(req, res, next){
     try {
 
         const db = await mongo();
+        
         const product = await db.collection('products').findOne({ productId });
         if (!product) {
             res.status(404).send('Produto não encontrado');
