@@ -14,6 +14,6 @@ router.use(productsMiddleware);
 
 router.put('/cart/product', updateProductAmount);
 router.post('/cart/product', addProductToCart);
-router.delete('/cart/product', deleteCartProduct);
+router.post('/cart/delete-product', deleteCartProduct);
 
 export default router;
