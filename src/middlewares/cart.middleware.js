@@ -12,8 +12,6 @@ async function validProduct(req, res, next){
         if (!product) {
             return res.status(404).send('Produto não encontrado');
         }
-
-        console.log("oi");
         
         res.locals.product = product;
         next();
