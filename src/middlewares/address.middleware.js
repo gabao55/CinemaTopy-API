@@ -9,7 +9,6 @@ const purchaseDetailsSchema = joi.object({
 });
 
 const checkoutSchema = joi.object({
-    userId: joi.string().hex().length(24).required(),
     products: joi.array().items(joi.object().keys({
         productId: joi.string().hex().length(24).required(),
         amount: joi.number().integer().min(1),
@@ -29,6 +28,7 @@ function validatePurchaseDetails(req, res, next) {
 function validateCheckout(req, res, next) {
     const validation = checkoutSchema.validate(req.body, { abortEarly: false });
     if (validation.error) {
+        console.log(1)
         const errors = validation.error.details.map(detail => detail.message);
         return res.status(422).send(errors);
     }

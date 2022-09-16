@@ -8,11 +8,13 @@ async function validToken(req, res, next){
 
         const session = await db.collection('sessions').findOne({ token });
         if (!session) {
+            console.log('session');
         return res.status(401).send();
         }
 
         const user = await db.collection('users').findOne({ _id: session.userId });
         if (!user) {
+            console.log('user');
             return res.sendStatus(401);
         }
 

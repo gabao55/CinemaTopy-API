@@ -7,8 +7,6 @@ const router = express.Router();
 router.post('/sign-up', signUp);
 router.post('/sign-in', signIn);
 
-router.use(authorizationMiddleware);
-
-router.get("/token", token);
+router.get("/token", authorizationMiddleware,token);
 
 export default router;

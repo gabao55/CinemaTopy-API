@@ -10,10 +10,8 @@ router.use(authorizationMiddleware);
 router.get('/cart/products', listCartProducts);
 router.delete('/cart/products', cleanCart);
 
-router.use(productsMiddleware);
-
-router.put('/cart/product', updateProductAmount);
-router.post('/cart/product', addProductToCart);
-router.post('/cart/delete-product', deleteCartProduct);
+router.put('/cart/product', productsMiddleware, updateProductAmount);
+router.post('/cart/product', productsMiddleware, addProductToCart);
+router.post('/cart/delete-product', productsMiddleware, deleteCartProduct);
 
 export default router;
