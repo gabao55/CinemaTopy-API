@@ -8,6 +8,6 @@ const router = express.Router();
 router.use(authorizationMiddleware);
 
 router.put('/purchase-details', validatePurchaseDetails, addUserPurchaseDetails);
-router.post('/checkout', validateCheckout, checkoutPurchase);
+router.post('/checkout', checkoutPurchase);
 
 export default router;

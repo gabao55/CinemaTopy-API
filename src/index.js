@@ -13,9 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(checkoutRouter);
-app.use(productRouter);
 app.use(authRouter);
+app.use(productRouter);
+app.use(checkoutRouter);
 app.use(cartRouter);
 
 let db = await mongo();

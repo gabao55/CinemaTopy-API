@@ -21,7 +21,7 @@ async function addUserPurchaseDetails(req, res) {
             paymentMethod,
         }});
 
-        return res.sendStatus(200);
+        return res.status(200).send(user);
 
     } catch (error) {
         return console.log(error);
@@ -45,8 +45,6 @@ async function checkoutPurchase(req, res) {
             address: user.address,
             products,
         }
-
-        cleanCart(req, res);
 
         return res.status(200).send(response)
 
