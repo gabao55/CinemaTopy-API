@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRouter from '../src/routes/auth.router.js';
 import cartRouter from '../src/routes/cart.router.js';
 import productRouter from '../src/routes/product.router.js';
+import checkoutRouter from '../src/routes/checkout.router.js';
 import mongo from './db/db.js';
 dotenv.config();
 
@@ -12,6 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(checkoutRouter);
 app.use(productRouter);
 app.use(authRouter);
 app.use(cartRouter);
