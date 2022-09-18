@@ -18,7 +18,6 @@ const signInSchema = joi.object({
 
 const signUp = async (req, res) => {
   const { email, password } = req.body;
-  console.log('a')
 
   const validation = signUpSchema.validate(req.body, { abortEarly: false });
 
