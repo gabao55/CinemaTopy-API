@@ -1,6 +1,8 @@
-import { ObjectId } from "mongodb";
 import mongo from "../db/db.js";
-import { cleanCart } from "./cart.controller.js";
+import sgMail from '@sendgrid/mail';
+import { ObjectId } from "mongodb";
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const db = await mongo();
 
@@ -45,6 +47,50 @@ async function checkoutPurchase(req, res) {
             address: user.address,
             products,
         }
+
+        const productsList = [];
+
+        for (let i = 0; i < products.length; i ++) {
+            const productDetails = await db.collection('products').findOne({ _id: new ObjectId(products[i].productId) });
+            
+            productsList.push(productDetails.name);
+        }
+    
+        
+        const msg = {
+            to: response.email,
+            from: 'cinematopy@gmail.com',
+            subject: 'Confirmação de pedido - CinemaTopy',
+            text: 'Email simulação de compra',
+            html: `
+                <h1>ESTE EMAIL É MERAMENTE ILUSTRATIVO, NÃO SERÁ ENVIADO NENHUM PEDIDO</h1>
+                <h2>Obrigado por pedir na CinemaTopy</h2>
+                <p>O pedido feito por ${response.name} será entregue em ${response.address.street}, ${response.address.number} ${response.address.complement} - ${response.address.state}</p>
+                <p>Produtos: ${productsList.join(', ')}</p>
+            `,
+        };
+
+        sgMail
+        .send(msg)
+        .then(() => {}, error => {
+            console.error(error);
+
+            if (error.response) {
+            console.error(error.response.body)
+            }
+        });
+        
+        (async () => {
+        try {
+            await sgMail.send(msg);
+        } catch (error) {
+            console.error(error);
+
+            if (error.response) {
+            console.error(error.response.body)
+            }
+        }
+        })();
 
         return res.status(200).send(response)
 
