@@ -99,4 +99,21 @@ async function checkoutPurchase(req, res) {
     }
 }
 
-export { addUserPurchaseDetails, checkoutPurchase };
+async function listPurchase(req, res) {
+    const user = res.locals.user;
+    try {
+        const purchases = await db.collection("purchases").find({userId: user._id}).toArray();
+        const obj = {
+            purchases,
+            paymentMethod: user.paymentMethod,
+            address: user.address,
+            name: user.name,
+            email: user.email
+        };
+        res.status(200).send(obj);
+      } catch (error) {
+        res.status(500).send(error.message);
+      }
+} 
+
+export { addUserPurchaseDetails, checkoutPurchase, listPurchase };
