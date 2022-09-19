@@ -12,8 +12,8 @@ async function addUserPurchaseDetails(req, res) {
 
 
     try {
-        
-        await db.collection('users').updateOne({ _id: user._id }, { $set: {
+
+        const purchaseDetails = {
             address: {
                 state,
                 street,
@@ -21,9 +21,16 @@ async function addUserPurchaseDetails(req, res) {
                 complement,
             },
             paymentMethod,
-        }});
+        }
+        
+        await db.collection('users').updateOne({ _id: user._id }, { $set: purchaseDetails});
 
-        return res.status(200).send(user);
+        const userData = {
+            ...user,
+            ...purchaseDetails
+        }
+
+        return res.status(200).send(userData);
 
     } catch (error) {
         return console.log(error);
